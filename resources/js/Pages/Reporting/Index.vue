@@ -6,6 +6,7 @@ import Chart from "@/Components/Chart.vue"
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {onMounted} from "vue";
 
 const form = useForm({
     transaction_date: '',
@@ -61,9 +62,7 @@ const columns = [
 
 const bookName = [];
 const qty = [];
-// const profit = [];
-// const total = [];
-//
+
 for(let i = 0; i < props.data.length; i++) {
     if(props.data[i].book_name) {
         bookName.push(props.data[i].book_name)
@@ -72,12 +71,6 @@ for(let i = 0; i < props.data.length; i++) {
     if(props.data[i].qty) {
         qty.push(props.data[i].qty)
     }
-    // if(props.data[i].profit) {
-    //     profit.push(props.data[i].profit)
-    // }
-    // if(props.data[i].total) {
-    //     total.push(props.data[i].total)
-    // }
 }
 
 const formatPrice = (value) => {
@@ -86,6 +79,8 @@ const formatPrice = (value) => {
 }
 
 const cellFormatter = (value, key) => {
+    if (key === 'fine')
+        return formatPrice(value)
     return value;
 }
 
@@ -96,6 +91,16 @@ const exceptColumns = ['id','deleted_at','created_at','updated_at', 'barang_id',
 const filter = () => {
     form.get(route('reporting.index'))
 }
+
+onMounted(() =>{
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if(urlParams.has('transaction_date'))
+        form.transaction_date = urlParams.get('transaction_date');
+    if(urlParams.has('return_date'))
+        form.return_date = urlParams.get('return_date');
+
+})
 </script>
 
 <template>

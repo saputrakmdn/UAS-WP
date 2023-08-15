@@ -16,28 +16,29 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\BookController::class, 'list'])->name('book.list')->middleware(['auth']);
+Route::middleware(['auth', 'can:isUser'])->get('/', [\App\Http\Controllers\BookController::class, 'list'])->name('book.list');
 
-Route::post('/add-to-cart', [\App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.add')->middleware(['auth']);
-Route::prefix('cart')->group(function (){
+Route::middleware(['auth', 'can:isUser'])->post('/add-to-cart', [\App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.add');
+Route::middleware(['auth', 'can:isUser'])->prefix('cart')->group(function (){
     Route::get('/', [\App\Http\Controllers\CartController::class, 'cart'])->name('cart.index');
     Route::post('/delete', [\App\Http\Controllers\CartController::class, 'deleteCart'])->name('cart.delete');
     Route::post('/checkout', [\App\Http\Controllers\CartController::class, 'store'])->name('cart.checkout');
-})->middleware(['auth']);
+});
 
-Route::prefix('return-book')->group(function (){
+Route::middleware(['auth', 'can:isUser'])->prefix('return-book')->group(function (){
     Route::get('/', [\App\Http\Controllers\TransactionController::class, 'listTransaction'])->name('returnbook.index');
     Route::post('/return/{detailTransaction}', [\App\Http\Controllers\TransactionController::class, 'returnBook'])->name('returnbook.process');
-})->middleware(['auth']);
+    Route::get('/detail/{id}', [\App\Http\Controllers\TransactionController::class, 'detail'])->name('returnbook.detail');
+});
 
-Route::prefix('transaction')->group(function (){
+Route::middleware(['auth', 'can:isAdmin'])->prefix('transaction')->group(function (){
     Route::get('/', [\App\Http\Controllers\TransactionController::class, 'index'])->name('transaction.index');
     Route::get('/detail/{id}', [\App\Http\Controllers\TransactionController::class, 'detail'])->name('transaction.detail');
-})->middleware(['auth', 'can:isAdmin']);
+});
 
-Route::prefix('reporting')->group(function (){
+Route::middleware(['auth', 'can:isAdmin'])->prefix('reporting')->group(function (){
     Route::get('/', [\App\Http\Controllers\ReportingController::class, 'index'])->name('reporting.index');
-})->middleware(['auth', 'can:isAdmin']);
+});
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'verified', 'can:isAdmin'])->name('dashboard');
 

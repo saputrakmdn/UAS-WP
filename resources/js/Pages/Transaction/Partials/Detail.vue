@@ -37,8 +37,16 @@ const columns = [
     }
  ];
 
+const formatPrice = (value) => {
+    let val = (value/1).toFixed(2).replace('.', ',')
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
+
 const cellFormatter = (value, key) => {
     // console.log(key)
+    if (key === 'fine')
+        return formatPrice(value);
+
     if(key === 'actual_return_date' && value === null)
         return '<p class="text-red-600">not return book</p>';
     return value;

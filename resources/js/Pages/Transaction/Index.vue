@@ -27,6 +27,11 @@ import {ref} from 'vue';
 import Detail from './Partials/Detail.vue';
 import axios from "axios";
 
+const formatPrice = (value) => {
+    let val = (value/1).toFixed(2).replace('.', ',')
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
+
 const cellFormatter = (value, key) => {
     // console.log(key)
     if(key === 'user')
@@ -38,6 +43,8 @@ const cellFormatter = (value, key) => {
         return 'Partially Returned';
     else if(key === 'transaction_status' && value === 3)
         return 'Done'
+    else if(key === 'transaction_fine_total')
+        return formatPrice(value);
 
     return value;
 }

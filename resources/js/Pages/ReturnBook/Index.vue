@@ -33,6 +33,11 @@ defineProps({
     }
 });
 
+const formatPrice = (value) => {
+    let val = (value/1).toFixed(2).replace('.', ',')
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
+
 const cellFormatter  = (value, key) => {
     if(key === 'transaction_status' && value === 1)
         return 'Loan';
@@ -40,6 +45,8 @@ const cellFormatter  = (value, key) => {
         return 'Partially Returned';
     else if(key === 'transaction_status' && value === 3)
         return 'Done';
+    else if(key === 'transaction_fine_total')
+        return formatPrice(value)
     return value;
 }
 
@@ -75,7 +82,7 @@ const menu = [
 ];
 
 const seeDetail = (event) =>{
-    axios.get(route('transaction.detail', {id: event.id})).then((result) => {
+    axios.get(route('returnbook.detail', {id: event.id})).then((result) => {
         console.log(result.data);
         data.value = result.data;
         showModal.value = true;
