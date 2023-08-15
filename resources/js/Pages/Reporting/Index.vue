@@ -1,9 +1,16 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import {Head, router, useForm} from '@inertiajs/vue3';
 import Table from "@/Components/Table.vue";
 import Chart from "@/Components/Chart.vue"
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
 
+const form = useForm({
+    transaction_date: '',
+    return_date: ''
+})
 const props = defineProps({
     data: {
         type: Array
@@ -73,8 +80,6 @@ for(let i = 0; i < props.data.length; i++) {
     // }
 }
 
-console.log(props.data)
-
 const formatPrice = (value) => {
     let val = (value/1).toFixed(2).replace('.', ',')
     return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
@@ -87,6 +92,10 @@ const cellFormatter = (value, key) => {
 const labels = ['On Time', 'Late'];
 
 const exceptColumns = ['id','deleted_at','created_at','updated_at', 'barang_id', 'user_id'];
+
+const filter = () => {
+    form.get(route('reporting.index'))
+}
 </script>
 
 <template>
@@ -100,15 +109,39 @@ const exceptColumns = ['id','deleted_at','created_at','updated_at', 'barang_id',
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <h3 class="font-semibold text-xl text-gray-800 leading-tight ml-3 mt-3">Filter:</h3>
+                    <div class="flex">
+                        <div class="flex flex-col ml-3 mt-3" style="width: 150px;">
+                            <p class="text-base leading-none text-gray-800">Transaction Date</p>
+                            <TextInput
+                                id="name"
+                                type="date"
+                                v-model="form.transaction_date"
+                                class="border border-gray-300 bg-gray-300 rounded-lg focus:ring-gray-300 focus:ring-gray-300"
+                                autocomplete="name"
+                            />
+                        </div>
+                        <div class="flex flex-col ml-3 mt-3" style="width: 150px;">
+                            <p class="text-base leading-none text-gray-800">Return Date</p>
+                            <TextInput
+                                id="name"
+                                type="date"
+                                v-model="form.return_date"
+                                class="border border-gray-300 bg-gray-300 rounded-lg focus:ring-gray-300 focus:ring-gray-300"
+                                autocomplete="name"
+                            />
+                        </div>
+                        <PrimaryButton class="ml-3 mt-7" @click="filter">Filter</PrimaryButton>
+                    </div>
                     <Table :records="data" :processColumn="false" :columnNames="columns" :cellFormatter="cellFormatter" :createButton="false" :exceptColumns="exceptColumns"></Table>
                 </div>
                 <div class="bg-white mt-3 overflow-hidden shadow-sm sm:rounded-lg">
                     <h2 class="h2 text-center text-2xl">Grafik Peminjaman</h2>
                     <div class="flex flex-col justify-center items-center">
-                        <div class="">
+                        <div class="pl-20 pr-20 w-3/4">
                             <Chart :dataProps="qty" :labels="bookName" :chartType="'bar'" :title='"Buku Paling Banyak Dipinjam"' :canvasId="'bookMostLoan'"></Chart>
                         </div>
-                        <div class="">
+                        <div class="pl-20 pr-20 w-2/4">
                             <Chart :dataProps="dataStatus" :labels="labels" :chartType="'pie'" :title='"Presentasi ketelambatan pengembalian"' :canvasId="'totalStatus'"></Chart>
                         </div>
                     </div>

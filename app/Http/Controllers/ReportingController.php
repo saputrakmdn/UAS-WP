@@ -14,6 +14,11 @@ class ReportingController extends Controller
     {
 
         $reporting = DetailTransaction::query()->join('book','detail_transaction_book_id', '=', 'book.id')->join('transaction', 'detail_transaction_transaction_id', '=', 'transaction.id')->join('users', 'transaction.transaction_user_id', '=', 'users.id');
+        if(!is_null($request->transaction_date))
+            $reporting = $reporting->where('transaction.transaction_date', '=', $request->transaction_date);
+
+        if(!is_null($request->return_date))
+            $reporting = $reporting->where('detail_transaction.detail_transaction_return_date', '=', $request->return_date);
         $reporting = $reporting->get();
 
         $data = [];
