@@ -25,7 +25,7 @@ class ReportingController extends Controller
 
         foreach ($reporting as $value)
         {
-            $status = $value->detail_transaction_return_date < $value->detail_transaction_actual_return_date ? 'Late' : 'On Time';
+            $status = $value->detail_transaction_actual_return_date != null ? ($value->detail_transaction_return_date < $value->detail_transaction_actual_return_date ? 'Late' : 'On Time') : 'Loan';
             $data[] = [
                 'book_name' => $value->book_name,
                 'user' => $value->name,

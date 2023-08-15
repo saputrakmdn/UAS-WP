@@ -142,6 +142,7 @@ const filter = () => {
                             <Chart :dataProps="qty" :labels="bookName" :chartType="'bar'" :title='"Buku Paling Banyak Dipinjam"' :canvasId="'bookMostLoan'"></Chart>
                         </div>
                         <div class="pl-20 pr-20 w-2/4">
+                            <h2 class="mt-4 h2 text-center text-2xl">Persentase Pengembalian Buku</h2>
                             <Chart :dataProps="dataStatus" :labels="labels" :chartType="'pie'" :title='"Presentasi ketelambatan pengembalian"' :canvasId="'totalStatus'"></Chart>
                         </div>
                     </div>
